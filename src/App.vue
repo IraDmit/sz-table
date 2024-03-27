@@ -11,6 +11,7 @@
 import AppFilters from "./components/app-filters.vue";
 import AppTable from "./components/app-table.vue";
 import { fetchData } from "./services";
+import { mapActions } from "vuex";
 export default {
   components: { AppFilters, AppTable },
   data() {
@@ -18,8 +19,12 @@ export default {
       paymentsList: null,
     };
   },
-  async mounted() {
+  async created() {
     this.paymentsList = await fetchData();
+    this.fetchDesignations()
+  },
+  methods: {
+    ...mapActions(["fetchDesignations"]),
   },
 };
 </script>
