@@ -7,7 +7,7 @@
       {{ payment.contract }}
     </div>
     <div class="col p-3 d-flex justify-content-start">
-      {{ getTypeById(payment.type_id) }}
+      {{ getTypeById(payment.type_id) || payment.type }}
     </div>
     <div class="col p-3 d-flex justify-content-start">
       {{ payment.date }}
@@ -16,11 +16,11 @@
       {{ payment.summ }}
     </div>
     <div class="col p-3 d-flex justify-content-start">
-      {{ getSourceById(payment.source_id) }}
+      {{ getSourceById(payment.source_id) || payment.source }}
     </div>
     <div class="col p-3 d-flex justify-content-center">
       <span :class="getClass" class="status">
-        {{ getStatusById(payment.status_id) }}
+        {{ getStatusById(payment.status_id) || payment.status }}
       </span>
     </div>
   </div>
@@ -58,6 +58,7 @@ export default {
   max-height: 120px;
   display: flex;
   align-items: center;
+
   &.grey {
     background-color: #6c757d;
   }

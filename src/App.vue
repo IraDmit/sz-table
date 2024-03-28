@@ -1,17 +1,14 @@
 <template>
   <div class="app container">
     <h1>Список платежей</h1>
-    <button
-      class="btn btn-primary"
-      data-bs-toggle="modal"
-      data-bs-target="#exampleModal"
-      @click="isOpen = true"
-    >
-      Добавить платеж
-    </button>
+    <div class="btn btn-primary" @click="openModal">Добавить платеж</div>
     <app-filters @updateFilter="updateFilter" />
     <app-table :paymentsList="paymentsList" />
-    <ModalPayment v-if="isOpen" />
+    <ModalPayment
+      :showModal="showModal"
+      @closeModal="closeModal"
+      @updateData="updateData"
+    />
   </div>
 </template>
 
@@ -28,6 +25,7 @@ export default {
     return {
       paymentsList: null,
       isOpen: false,
+      showModal: false,
     };
   },
   computed: {
@@ -53,6 +51,18 @@ export default {
     ...mapActions(["fetchDesignations"]),
     async updateFilter(filter) {
       this.paymentsList = await fetchData(filter);
+    },
+    openModal() {
+      this.showModal = true;
+    },
+    closeModal() {
+      this.showModal = false;
+    },
+    updateData(newPayment) {
+      this.paymentsList.push(newPayment);
+      // setTimeout(async () => {
+      //   this.paymentsList = await fetchData();
+      // }, 1000);
     },
   },
 };

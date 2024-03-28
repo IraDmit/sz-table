@@ -7,4 +7,7 @@ export const fetchData = async (params = "") => {
   return data;
 };
 
-// https://tests.szapi.ru/ts10/public_html/payments?source_id=1
+export const sendData = async (paramsData) => {
+  const { data } = await axios.post(URL, paramsData);
+  return data;
+};
