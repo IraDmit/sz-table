@@ -1,40 +1,34 @@
 <template>
   <div class="head-table">
-    <div class="col d-flex">
+    <div class="col d-flex justify-content-start">
       <span>Клиент</span>
-      <div class="icons-filter d-flex">
-        <img src="../../assets/img/arrow.svg" alt="arr" />
-        <img src="../../assets/img/arrow.svg" alt="arr" class="rotate" />
-      </div>
+      <SortsActions :fieldSort="'client'" />
     </div>
-    <div class="col">Договор №</div>
-    <div class="col">
+    <div class="col d-flex justify-content-start">Договор №</div>
+    <div class="col d-flex justify-content-start">
       Тип платежа
-      <div class="icons-filter d-flex">
-        <img src="../../assets/img/arrow.svg" alt="arr" />
-        <img src="../../assets/img/arrow.svg" alt="arr" class="rotate" />
-      </div>
+      <SortsActions :fieldSort="'type_id'" />
     </div>
-    <div class="col">
+    <div class="col d-flex justify-content-start">
       Дата
-      <div class="icons-filter d-flex">
-        <img src="../../assets/img/arrow.svg" alt="arr" />
-        <img src="../../assets/img/arrow.svg" alt="arr" class="rotate" />
-      </div>
+      <SortsActions :fieldSort="'date'" />
     </div>
-    <div class="col">Сумма (руб)</div>
-    <div class="col">Источник платежа</div>
-    <div class="col">
+    <div class="col d-flex justify-content-start">Сумма (руб)</div>
+    <div class="col d-flex justify-content-start">Источник платежа</div>
+    <div class="col d-flex justify-content-start">
       Статус
-      <div class="icons-filter d-flex">
-        <img src="../../assets/img/arrow.svg" alt="arr" />
-        <img src="../../assets/img/arrow.svg" alt="arr" class="rotate" />
-      </div>
+      <SortsActions :fieldSort="'status_id'" />
     </div>
   </div>
 </template>
 <script>
-export default {};
+import SortsActions from "../sorts-actions/sorts-actions.vue";
+
+export default {
+  components: {
+    SortsActions,
+  },
+};
 </script>
 
 <style lang="scss" scoped>

@@ -1,11 +1,7 @@
 <template>
   <div class="filters-wrp d-flex">
-    <component
-      :is="filter.component"
-      v-for="(filter, idx) in filtersList"
-      :key="`filter${idx}`"
-      :placeholder="filter.placeholder"
-    />
+    <component :is="filter.component" v-for="(filter, idx) in filtersList" :key="`filter${idx}`"
+      :placeholder="filter.placeholder" :title="filter.title" />
   </div>
 </template>
 
@@ -18,11 +14,13 @@ export default {
       filtersList: [
         {
           component: AppInput,
-          placeholder: "Дата платежа",
+          title: "Дата платежа",
+          placeholder: "",
         },
         {
           component: AppSelect,
-          placeholder: "Источник платежа",
+          title: "Источник платежа",
+          placeholder: "Все платежи",
         },
       ],
     };

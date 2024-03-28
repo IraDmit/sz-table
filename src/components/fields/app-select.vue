@@ -1,22 +1,34 @@
 <template>
   <div class="filter">
-    <h6>{{ placeholder }}</h6>
-    <select class="form-select" aria-label="Пример выбора по умолчанию">
+    <h6>{{ title }}</h6>
+    <select class="form-select" placeholder="Все платежи">
       <option selected>{{ placeholder }}</option>
-      <option value="1">One</option>
-      <option value="2">Two</option>
-      <option value="3">Three</option>
+      <option
+        :value="source.source_id"
+        v-for="(source, idx) in getSources"
+        :key="`source${idx}`"
+      >
+        {{ source.title }}
+      </option>
     </select>
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   props: {
+    title: {
+      type: String,
+      default: "title",
+    },
     placeholder: {
       type: String,
       default: "placeholder",
     },
+  },
+  computed: {
+    ...mapGetters(["getSources"]),
   },
 };
 </script>

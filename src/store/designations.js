@@ -24,15 +24,21 @@ export default {
   getters: {
     getSources: (state) => state.sources,
     getSourceById: (state) => (id) => {
-      return state.sources.find((source) => source.id === id);
+      if (!id && !state.sources) return;
+      const el = state?.sources?.find((source) => source.id === id);
+      return el?.title;
     },
     getTypes: (state) => state.types,
     getTypeById: (state) => (id) => {
-      return state.types.find((type) => type.id === id);
+      if (!id && !state.types) return;
+      const el = state?.types?.find((type) => type.id === id);
+      return el?.title;
     },
     getStatuses: (state) => state.statuses,
     getStatusById: (state) => (id) => {
-      return state.statuses.find((status) => status.id === id);
+      if (!id && !state.statuses) return;
+      const el = state?.statuses?.find((status) => status.id === id);
+      return el?.title;
     },
   },
 };

@@ -1,6 +1,6 @@
 <template>
   <div class="table table-hover">
-    <table-head class="row p-3" />
+    <table-head class="row" />
     <table-item
       v-for="(payment, idx) in paymentsList"
       :key="`payment${idx}`"

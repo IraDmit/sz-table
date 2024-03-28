@@ -1,7 +1,11 @@
 <template>
   <div class="row">
     <template v-for="(val, key, idx) in payment">
-      <div class="col p-3 d-flex justify-content-center" v-if="key !== 'id'" :key="'key' + idx">
+      <div
+        class="col p-3 d-flex justify-content-start"
+        v-if="key !== 'id'"
+        :key="'key' + idx"
+      >
         {{ getModifyValue(val, key) }}
       </div>
     </template>
@@ -14,7 +18,7 @@ export default {
   props: {
     payment: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
   },
   computed: {
@@ -22,9 +26,14 @@ export default {
   },
   methods: {
     getModifyValue(value, key) {
+      if (!value) return;
       switch (key) {
         case "source_id":
           return this.getSourceById(value);
+        case "type_id":
+          return this.getTypeById(value);
+        case "status_id":
+          return this.getStatusById(value);
         default:
           return value;
       }
