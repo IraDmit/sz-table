@@ -15,7 +15,7 @@
     </div>
     <div class="col d-flex justify-content-start">Сумма (руб)</div>
     <div class="col d-flex justify-content-start">Источник платежа</div>
-    <div class="col d-flex justify-content-start">
+    <div class="col d-flex justify-content-center">
       Статус
       <SortsActions :fieldSort="'status_id'" />
     </div>

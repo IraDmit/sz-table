@@ -1,10 +1,10 @@
 <template>
   <div class="filter">
     <h6>{{ title }}</h6>
-    <select class="form-select" placeholder="Все платежи">
-      <option selected>{{ placeholder }}</option>
+    <select class="form-select" placeholder="Все платежи" v-model="filterValue">
+      <option selected :value="false">{{ placeholder }}</option>
       <option
-        :value="source.source_id"
+        :value="source.id"
         v-for="(source, idx) in getSources"
         :key="`source${idx}`"
       >
@@ -26,6 +26,17 @@ export default {
       type: String,
       default: "placeholder",
     },
+  },
+  watch: {
+    filterValue() {
+      const params = this.filterValue ? `?source_id=${this.filterValue}` : "";
+      this.$emit("updateFilter", params);
+    },
+  },
+  data() {
+    return {
+      filterValue: null,
+    };
   },
   computed: {
     ...mapGetters(["getSources"]),

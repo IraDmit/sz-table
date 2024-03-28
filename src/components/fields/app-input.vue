@@ -1,7 +1,14 @@
 <template>
   <div class="">
     <h6>{{ title }}</h6>
-    <input type="date" class="form-control" id="inputDate" />
+    {{ filterValue }}
+    <input
+      type="date"
+      class="form-control"
+      id="inputDate"
+      v-model="filterValue"
+      @input="sendFilter"
+    />
   </div>
 </template>
 
@@ -15,6 +22,17 @@ export default {
     placeholder: {
       type: String,
       default: "placeholder",
+    },
+  },
+  data() {
+    return {
+      filterValue: null,
+    };
+  },
+  methods: {
+    sendFilter() {
+      const params = this.filterValue ? `?date=${this.filterValue}` : "";
+      this.$emit("updateFilter", params);
     },
   },
 };

@@ -1,14 +1,28 @@
 <template>
   <div class="row">
-    <template v-for="(val, key, idx) in payment">
-      <div
-        class="col p-3 d-flex justify-content-start"
-        v-if="key !== 'id'"
-        :key="'key' + idx"
-      >
-        {{ getModifyValue(val, key) }}
-      </div>
-    </template>
+    <div class="col p-3 d-flex justify-content-start">
+      {{ payment.client }}
+    </div>
+    <div class="col p-3 d-flex justify-content-start">
+      {{ payment.contract }}
+    </div>
+    <div class="col p-3 d-flex justify-content-start">
+      {{ getTypeById(payment.type_id) }}
+    </div>
+    <div class="col p-3 d-flex justify-content-start">
+      {{ payment.date }}
+    </div>
+    <div class="col p-3 d-flex justify-content-start">
+      {{ payment.summ }}
+    </div>
+    <div class="col p-3 d-flex justify-content-start">
+      {{ getSourceById(payment.source_id) }}
+    </div>
+    <div class="col p-3 d-flex justify-content-center">
+      <span :class="getClass" class="status">
+        {{ getStatusById(payment.status_id) }}
+      </span>
+    </div>
   </div>
 </template>
 
@@ -23,23 +37,37 @@ export default {
   },
   computed: {
     ...mapGetters(["getSourceById", "getTypeById", "getStatusById"]),
-  },
-  methods: {
-    getModifyValue(value, key) {
-      if (!value) return;
-      switch (key) {
-        case "source_id":
-          return this.getSourceById(value);
-        case "type_id":
-          return this.getTypeById(value);
-        case "status_id":
-          return this.getStatusById(value);
-        default:
-          return value;
+    getClass() {
+      if (this.payment.status_id === 1) {
+        return "grey";
+      } else if (this.payment.status_id === 2) {
+        return "orange";
+      } else if (this.payment.status_id === 3) {
+        return "green";
       }
+      return null;
     },
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.status {
+  color: #fff;
+  border-radius: 8px;
+  max-height: 120px;
+  display: flex;
+  align-items: center;
+  &.grey {
+    background-color: #6c757d;
+  }
+
+  &.orange {
+    background-color: #fd7e14;
+  }
+
+  &.green {
+    background-color: #28a745;
+  }
+}
+</style>

@@ -1,7 +1,13 @@
 <template>
   <div class="filters-wrp d-flex">
-    <component :is="filter.component" v-for="(filter, idx) in filtersList" :key="`filter${idx}`"
-      :placeholder="filter.placeholder" :title="filter.title" />
+    <component
+      :is="filter.component"
+      v-for="(filter, idx) in filtersList"
+      :key="`filter${idx}`"
+      :placeholder="filter.placeholder"
+      :title="filter.title"
+      @updateFilter="updateFilter"
+    />
   </div>
 </template>
 
@@ -24,6 +30,11 @@ export default {
         },
       ],
     };
+  },
+  methods: {
+    updateFilter(filter) {
+      this.$emit("updateFilter", filter);
+    },
   },
 };
 </script>

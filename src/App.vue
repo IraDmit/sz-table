@@ -9,7 +9,7 @@
     >
       Добавить платеж
     </button>
-    <app-filters />
+    <app-filters @updateFilter="updateFilter" />
     <app-table :paymentsList="paymentsList" />
     <ModalPayment v-if="isOpen" />
   </div>
@@ -51,6 +51,9 @@ export default {
   },
   methods: {
     ...mapActions(["fetchDesignations"]),
+    async updateFilter(filter) {
+      this.paymentsList = await fetchData(filter);
+    },
   },
 };
 </script>
