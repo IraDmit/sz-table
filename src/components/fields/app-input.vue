@@ -1,18 +1,18 @@
 <template>
   <div class="">
     <h6>{{ title }}</h6>
-    {{ filterValue }}
     <input
       type="date"
       class="form-control"
       id="inputDate"
       v-model="filterValue"
-      @input="sendFilter"
+      @input="debounceSendFilter"
     />
   </div>
 </template>
 
 <script>
+import debounce from "@/utils";
 export default {
   props: {
     title: {
@@ -29,10 +29,14 @@ export default {
       filterValue: null,
     };
   },
+  computed: {
+    debounceSendFilter() {
+      return debounce(this.sendFilter);
+    },
+  },
   methods: {
     sendFilter() {
-      const params = this.filterValue ? `?date=${this.filterValue}` : "";
-      this.$emit("updateFilter", params);
+      this.$emit("updateParams", "date", this.filterValue);
     },
   },
 };

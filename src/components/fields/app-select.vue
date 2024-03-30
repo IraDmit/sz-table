@@ -29,8 +29,7 @@ export default {
   },
   watch: {
     filterValue() {
-      const params = this.filterValue ? `?source_id=${this.filterValue}` : "";
-      this.$emit("updateFilter", params);
+      this.$emit("updateParams", "source_id", this.filterValue);
     },
   },
   data() {

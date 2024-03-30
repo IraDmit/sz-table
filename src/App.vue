@@ -4,11 +4,14 @@
     <div class="btn btn-primary" @click="openModal">Добавить платеж</div>
     <app-filters @updateFilter="updateFilter" />
     <app-table :paymentsList="paymentsList" />
-    <ModalPayment
-      :showModal="showModal"
-      @closeModal="closeModal"
-      @updateData="updateData"
-    />
+    <transition name="fade">
+      <ModalPayment
+        :showModal="showModal"
+        @closeModal="closeModal"
+        @updateData="updateData"
+        v-if="showModal"
+      />
+    </transition>
   </div>
 </template>
 
@@ -19,6 +22,7 @@ import ModalPayment from "./components/modals/modal-payment.vue";
 import { fetchData } from "./services";
 import { mapActions, mapGetters } from "vuex";
 import { sorting } from "./sorts";
+
 export default {
   components: { AppFilters, AppTable, ModalPayment },
   data() {
@@ -60,9 +64,6 @@ export default {
     },
     updateData(newPayment) {
       this.paymentsList.push(newPayment);
-      // setTimeout(async () => {
-      //   this.paymentsList = await fetchData();
-      // }, 1000);
     },
   },
 };
@@ -71,5 +72,15 @@ export default {
 <style lang="scss" scoped>
 .app {
   position: relative;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

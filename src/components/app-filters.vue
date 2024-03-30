@@ -6,7 +6,7 @@
       :key="`filter${idx}`"
       :placeholder="filter.placeholder"
       :title="filter.title"
-      @updateFilter="updateFilter"
+      @updateParams="updateParams"
     />
   </div>
 </template>
@@ -29,11 +29,27 @@ export default {
           placeholder: "Все платежи",
         },
       ],
+      params: {
+        date: null,
+        source_id: null,
+      },
     };
   },
   methods: {
-    updateFilter(filter) {
-      this.$emit("updateFilter", filter);
+    async updateParams(key, value) {
+      this.params[key] = value;
+      const strParams = await this.createFilterString();
+      this.$emit("updateFilter", strParams);
+    },
+    createFilterString() {
+      return `?${Object.entries(this.params)
+        .reduce((acc, [key, value]) => {
+          if (value) {
+            acc.push(`${key}=${value}`);
+          }
+          return acc;
+        }, [])
+        .join("&")}`;
     },
   },
 };
