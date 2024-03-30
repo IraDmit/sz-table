@@ -8,152 +8,20 @@
             <div class="btn-close" @click="$emit('closeModal')"></div>
           </div>
           <form class="modal-body" @submit.prevent="submitForm" ref="form">
-            <div class="mb-3 field">
-              <label for="client" class="form-label"
-                ><span>*</span>Клиент</label
-              >
-              <input
-                type="text"
-                class="form-control"
-                id="client"
-                v-model="formData.client"
-                placeholder="Введите ФИО"
-                :class="{ 'is-invalid': !isFieldValid('client') && showError }"
-                required
-              />
-              <div class="error" v-if="!isFieldValid('client') && showError">
-                Пожалуйста, введите клиента
-              </div>
-            </div>
-            <div class="mb-3 field">
-              <label for="contractNumber" class="form-label"
-                ><span>*</span>Договор №</label
-              >
-              <input
-                type="text"
-                class="form-control"
-                id="contractNumber"
-                v-model="formData.contract"
-                placeholder="Введите номер договора"
-                :class="{
-                  'is-invalid': !isFieldValid('contract') && showError,
-                }"
-                required
-              />
-              <div class="error" v-if="!isFieldValid('contract') && showError">
-                Пожалуйста, введите номер договора
-              </div>
-            </div>
-            <div class="mb-3 field">
-              <label for="paymentType" class="form-label"
-                ><span>*</span>Тип оплаты</label
-              >
-              <select
-                class="form-select"
-                id="paymentType"
-                :class="{ 'is-invalid': !isFieldValid('type_id') && showError }"
-                v-model="formData.type_id"
-                required
-              >
-                <option :value="null" selected>Не выбрано</option>
-                <option
-                  :value="type.id"
-                  v-for="(type, idx) in getTypes"
-                  :key="'type' + idx"
-                >
-                  {{ type.title }}
-                </option>
-              </select>
-              <div class="error" v-if="!isFieldValid('type_id') && showError">
-                Пожалуйста, выберите тип оплаты
-              </div>
-            </div>
-            <div class="mb-3 field">
-              <label for="paymentDate" class="form-label"
-                ><span>*</span>Дата оплаты</label
-              >
-              <input
-                type="date"
-                class="form-control"
-                id="paymentDate"
-                :class="{ 'is-invalid': !isFieldValid('date') && showError }"
-                v-model="formData.date"
-                required
-              />
-              <div class="error" v-if="!isFieldValid('date') && showError">
-                Пожалуйста, введите дату оплаты
-              </div>
-            </div>
-            <div class="mb-3 field">
-              <label for="paymentAmount" class="form-label"
-                ><span>*</span>Сумма оплаты</label
-              >
-              <input
-                type="number"
-                class="form-control"
-                :class="{ 'is-invalid': !isFieldValid('summ') && showError }"
-                id="paymentAmount"
-                v-model="formData.summ"
-                placeholder="Введите сумму"
-                required
-              />
-              <div class="error" v-if="!isFieldValid('summ') && showError">
-                Пожалуйста, введите сумму оплаты
-              </div>
-            </div>
-            <div class="mb-3 field">
-              <label for="paymentSource" class="form-label"
-                ><span>*</span>Источник платежа</label
-              >
-              <select
-                class="form-select"
-                id="paymentSource"
-                :class="{
-                  'is-invalid': !isFieldValid('source_id') && showError,
-                }"
-                v-model="formData.source_id"
-                required
-              >
-                <option :value="null" selected>Не выбрано</option>
-                <option
-                  :value="source.id"
-                  v-for="(source, idx) in getSources"
-                  :key="'source' + idx"
-                >
-                  {{ source.title }}
-                </option>
-              </select>
-              <div class="error" v-if="!isFieldValid('source_id') && showError">
-                Пожалуйста, выберите источник платежа
-              </div>
-            </div>
-            <div class="mb-3 field">
-              <label for="status" class="form-label"
-                ><span>*</span>Статус</label
-              >
-              <select
-                class="form-select"
-                id="status"
-                :class="{
-                  'is-invalid': !isFieldValid('status_id') && showError,
-                }"
-                v-model="formData.status_id"
-                required
-              >
-                <option :value="null">Не оплачено</option>
-
-                <option
-                  :value="status.id"
-                  v-for="(status, idx) in getStatuses"
-                  :key="'status' + idx"
-                >
-                  {{ status.title }}
-                </option>
-              </select>
-              <div class="error" v-if="!isFieldValid('status_id') && showError">
-                Пожалуйста, выберите статус
-              </div>
-            </div>
+            <component
+              :is="field.component"
+              v-for="(field, idx) in fieldsList"
+              :key="'field' + idx"
+              :placeholder="field.placeholder"
+              :options="field.options"
+              :title="field.title"
+              :errorText="field.errorText"
+              :type="field.type"
+              :showError="showError"
+              :name="field.name"
+              :clear-value="clearValues"
+              @updateValue="updateValue"
+            ></component>
           </form>
           <div class="modal-footer d-flex justify-content-between">
             <div class="btn btn-secondary" @click="$emit('closeModal')">
@@ -176,6 +44,8 @@
 <script>
 import { mapGetters } from "vuex";
 import { sendData } from "../../services";
+import ModalInput from "../dinamic-form/fields/modal-input.vue";
+import ModalSelect from "../dinamic-form/fields/modal-select.vue";
 export default {
   props: {
     showModal: {
@@ -186,21 +56,74 @@ export default {
   data() {
     return {
       showError: false,
-      formData: {
-        client: "",
-        contract: "",
-        type_id: null,
-        date: "",
-        summ: "",
-        status_id: null,
-        source_id: null,
-      },
+      formData: {},
     };
   },
   computed: {
     ...mapGetters(["getTypes", "getStatuses", "getSources"]),
+
+    fieldsList() {
+      return [
+        {
+          component: ModalInput,
+          title: "Клиент",
+          placeholder: "Введите ФИО",
+          errorText: "Пожалуйста, введите клиента",
+          type: "text",
+          name: "client",
+        },
+        {
+          component: ModalInput,
+          title: "Договор №",
+          placeholder: "Введите номер договора",
+          errorText: "Пожалуйста, введите номер договора",
+          type: "text",
+          name: "contract",
+        },
+        {
+          component: ModalSelect,
+          title: "Тип оплаты",
+          placeholder: "Не выбрано",
+          errorText: "Пожалуйста, выберите тип оплаты",
+          options: this.getTypes,
+          name: "type_id",
+        },
+        {
+          component: ModalInput,
+          title: "Дата оплаты",
+          errorText: "Пожалуйста, введите дату оплаты",
+          type: "date",
+          name: "date",
+        },
+        {
+          component: ModalInput,
+          title: "Сумма оплаты",
+          placeholder: "Введите сумму",
+          errorText: "Пожалуйста, введите сумму оплаты",
+          type: "number",
+          name: "summ",
+        },
+        {
+          component: ModalSelect,
+          title: "Источник платежа",
+          placeholder: "Не выбрано",
+          errorText: "Пожалуйста, выберите источник платежа",
+          options: this.getSources,
+          name: "source_id",
+        },
+        {
+          component: ModalSelect,
+          title: "Статус",
+          placeholder: "Не оплачено",
+          errorText: "Пожалуйста, выберите статус",
+          options: this.getStatuses,
+          name: "status_id",
+        },
+      ];
+    },
     isFormValid() {
-      return Object.values(this.formData).every((value) => value !== "");
+      if (!Object.keys(this.formData).length) return false;
+      return Object.values(this.formData).every((value) => !!value);
     },
   },
   methods: {
@@ -212,15 +135,20 @@ export default {
         this.$emit("updateData", data);
         this.$emit("closeModal");
         this.clearForm();
+        this.clearValues = true;
+        setTimeout(() => {
+          this.clearValues = false;
+        }, 300);
       }
-    },
-    isFieldValid(fieldName) {
-      return !!this.formData[fieldName];
     },
     clearForm() {
       Object.keys(this.formData).forEach((key) => {
         this.formData[key] = null;
       });
+    },
+    updateValue(key, newValue) {
+      this.$set(this.formData, key, newValue);
+      // this.formData[key] = newValue;
     },
   },
 };
