@@ -1,5 +1,12 @@
 <template>
-  <div class="mb-3 field">
+  <ValidationProvider
+    v-slot="{ errors }"
+    tag="div"
+    class="field mb-3"
+    :name="name"
+    :rules="rules"
+    :custom-messages="{ required: errorText }"
+  >
     <label for="modal-select" class="form-label"
       ><span>*</span>{{ title }}</label
     >
@@ -7,10 +14,9 @@
       class="form-select"
       id="modal-select"
       :class="{
-        'is-invalid': !isFieldValid && showError,
+        'is-invalid': errors.length,
       }"
       v-model="inputValue"
-      required
     >
       <option :value="null">{{ placeholder }}</option>
 
@@ -22,14 +28,18 @@
         {{ option.title }}
       </option>
     </select>
-    <div class="error" v-if="!isFieldValid && showError">
-      {{ errorText }}
+    <div class="error" v-if="errors.length">
+      {{ errors[0] }}
     </div>
-  </div>
+  </ValidationProvider>
 </template>
 
 <script>
+import { ValidationProvider } from "vee-validate";
 export default {
+  components: {
+    ValidationProvider,
+  },
   props: {
     options: {
       type: Array,
@@ -55,9 +65,13 @@ export default {
       type: String,
       default: "name",
     },
-		clearValue: {
+    clearValue: {
       type: Boolean,
       default: false,
+    },
+    rules: {
+      type: Object,
+      default: () => {},
     },
   },
   data() {

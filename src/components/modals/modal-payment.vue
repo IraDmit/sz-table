@@ -7,34 +7,41 @@
             <h5 class="modal-title">Добавление нового платежа</h5>
             <div class="btn-close" @click="$emit('closeModal')"></div>
           </div>
-          <form class="modal-body" @submit.prevent="submitForm" ref="form">
+          <ValidationObserver
+            class="modal-body"
+            tag="form"
+            @submit.prevent="handleSubmit(submitForm)"
+            ref="formObserver"
+            v-slot="{ handleSubmit }"
+          >
             <component
-              :is="field.component"
               v-for="(field, idx) in fieldsList"
               :key="'field' + idx"
+              :rules="field.rules"
+              :is="field.component"
               :placeholder="field.placeholder"
               :options="field.options"
               :title="field.title"
               :errorText="field.errorText"
               :type="field.type"
-              :showError="showError"
               :name="field.name"
+              v-model="formData[field.name]"
               :clear-value="clearValues"
               @updateValue="updateValue"
             ></component>
-          </form>
-          <div class="modal-footer d-flex justify-content-between">
-            <div class="btn btn-secondary" @click="$emit('closeModal')">
-              Отменить
+            <div class="modal-footer d-flex justify-content-between">
+              <div class="btn btn-secondary" @click="$emit('closeModal')">
+                Отменить
+              </div>
+              <div
+                class="btn btn-primary"
+                :disabled="!isFormValid"
+                @click="submitForm"
+              >
+                Добавить оплату
+              </div>
             </div>
-            <div
-              class="btn btn-primary"
-              :disabled="!isFormValid"
-              @click="submitForm"
-            >
-              Добавить оплату
-            </div>
-          </div>
+          </ValidationObserver>
         </div>
       </div>
     </div>
@@ -42,11 +49,19 @@
 </template>
 
 <script>
+import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
+import { required } from "vee-validate/dist/rules";
 import { mapGetters } from "vuex";
 import { sendData } from "../../services";
 import ModalInput from "../dinamic-form/fields/modal-input.vue";
 import ModalSelect from "../dinamic-form/fields/modal-select.vue";
+import * as rules from "vee-validate/dist/rules";
+
+Object.keys(rules).forEach((rule) => {
+  extend(rule, rules[rule]);
+});
 export default {
+  components: { ValidationObserver, ValidationProvider },
   props: {
     showModal: {
       type: Boolean,
@@ -57,11 +72,11 @@ export default {
     return {
       showError: false,
       formData: {},
+      clearValues: false,
     };
   },
   computed: {
     ...mapGetters(["getTypes", "getStatuses", "getSources"]),
-
     fieldsList() {
       return [
         {
@@ -71,6 +86,7 @@ export default {
           errorText: "Пожалуйста, введите клиента",
           type: "text",
           name: "client",
+          rules: { required: true },
         },
         {
           component: ModalInput,
@@ -79,6 +95,7 @@ export default {
           errorText: "Пожалуйста, введите номер договора",
           type: "text",
           name: "contract",
+          rules: { required: true },
         },
         {
           component: ModalSelect,
@@ -87,6 +104,7 @@ export default {
           errorText: "Пожалуйста, выберите тип оплаты",
           options: this.getTypes,
           name: "type_id",
+          rules: { required: true },
         },
         {
           component: ModalInput,
@@ -94,6 +112,7 @@ export default {
           errorText: "Пожалуйста, введите дату оплаты",
           type: "date",
           name: "date",
+          rules: { required: true },
         },
         {
           component: ModalInput,
@@ -102,6 +121,7 @@ export default {
           errorText: "Пожалуйста, введите сумму оплаты",
           type: "number",
           name: "summ",
+          rules: { required: true },
         },
         {
           component: ModalSelect,
@@ -110,6 +130,7 @@ export default {
           errorText: "Пожалуйста, выберите источник платежа",
           options: this.getSources,
           name: "source_id",
+          rules: { required: true },
         },
         {
           component: ModalSelect,
@@ -118,6 +139,7 @@ export default {
           errorText: "Пожалуйста, выберите статус",
           options: this.getStatuses,
           name: "status_id",
+          rules: { required: true },
         },
       ];
     },
@@ -127,28 +149,28 @@ export default {
     },
   },
   methods: {
-    submitForm() {
-      this.showError = true;
-      if (this.isFormValid) {
+    async submitForm() {
+      const isValidForm = await this.$refs.formObserver.validate();
+      console.log(isValidForm);
+      if (isValidForm) {
         const data = sendData(this.formData);
-        this.showError = false;
         this.$emit("updateData", data);
         this.$emit("closeModal");
         this.clearForm();
-        this.clearValues = true;
-        setTimeout(() => {
-          this.clearValues = false;
-        }, 300);
       }
     },
     clearForm() {
+      this.$refs.formObserver.reset();
       Object.keys(this.formData).forEach((key) => {
         this.formData[key] = null;
       });
+      this.clearValues = true;
+      setTimeout(() => {
+        this.clearValues = false;
+      }, 300);
     },
     updateValue(key, newValue) {
       this.$set(this.formData, key, newValue);
-      // this.formData[key] = newValue;
     },
   },
 };
@@ -166,34 +188,6 @@ export default {
   overflow-x: hidden;
   overflow-y: auto;
   outline: 0;
-
-  .field {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    align-items: center;
-    justify-content: center;
-    grid-gap: 20px;
-    padding: 10px;
-
-    .form-label {
-      span {
-        color: #ff3333;
-      }
-
-      text-align: end;
-    }
-  }
-
-  .error {
-    color: #ff3333;
-    grid-column: 1 / span 2;
-
-    position: absolute;
-    bottom: -20%;
-
-    right: 0;
-  }
 }
 
 .modal.show {

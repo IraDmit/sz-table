@@ -1,5 +1,12 @@
 <template>
-  <div class="mb-3 field">
+  <ValidationProvider
+    v-slot="{ errors }"
+    tag="div"
+    :name="name"
+    class="field mb-3"
+    :rules="rules"
+    :custom-messages="{ required: errorText }"
+  >
     <label for="modal-input" class="form-label"
       ><span>*</span>{{ title }}</label
     >
@@ -7,23 +14,26 @@
       :type="type"
       class="form-control"
       id="modal-input"
-      v-model="inputValue"
+      v-model="value"
       :placeholder="placeholder"
       :class="{
-        'is-invalid': !isFieldValid && showError,
+        'is-invalid': errors.length,
       }"
-      required
       :name="name"
       @input="updateValue"
     />
-    <div class="error" v-if="!isFieldValid && showError">
-      {{ errorText }}
+    <div class="error" v-if="errors.length">
+      {{ errors[0] }}
     </div>
-  </div>
+  </ValidationProvider>
 </template>
 
 <script>
+import { ValidationProvider } from "vee-validate";
 export default {
+  components: {
+    ValidationProvider,
+  },
   props: {
     type: {
       type: String,
@@ -41,10 +51,6 @@ export default {
       type: String,
       default: "error",
     },
-    showError: {
-      type: Boolean,
-      default: false,
-    },
     name: {
       type: String,
       default: "name",
@@ -53,30 +59,26 @@ export default {
       type: Boolean,
       default: false,
     },
+    rules: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {
-      inputValue: null,
+      value: null,
     };
-  },
-  computed: {
-    isFieldValid() {
-      return !!this.inputValue;
-    },
-  },
-  created() {
-    this.$emit("updateValue", this.name, this.inputValue);
   },
   watch: {
     clearValue(n, o) {
       if (!o && n) {
-        this.inputValue = null;
+        this.value = null;
       }
     },
   },
   methods: {
     updateValue() {
-      this.$emit("updateValue", this.name, this.inputValue);
+      this.$emit("updateValue", this.name, this.value);
     },
   },
 };
