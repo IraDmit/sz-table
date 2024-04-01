@@ -55,7 +55,7 @@ export default {
       type: String,
       default: "name",
     },
-		clearValue: {
+    clearValue: {
       type: Boolean,
       default: false,
     },

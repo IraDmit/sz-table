@@ -57,6 +57,7 @@ export default {
     return {
       showError: false,
       formData: {},
+      clearValues: false,
     };
   },
   computed: {
